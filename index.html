@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#00843D">
+  <title>Monitoring Bisnis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <section id="login">
+    <div class="lg-card">
+      <div class="lg-left">
+        <div class="lg-mark"><img src="pegadaian-logo.png" alt="Pegadaian"></div>
+        <div class="lg-copy">
+          <small>SISTEM INFORMASI</small>
+          <h1>Monitoring<br>Bisnis</h1>
+          <p>Penggabungan data KPI dari berbagai daerah menjadi satu data konsolidasi nasional yang siap diolah dan digunakan kembali.</p>
+        </div>
+        <ul class="lg-points">
+          <li>Unggah beberapa file Excel atau CSV sekaligus</li>
+          <li>Validasi format dan nama kolom otomatis</li>
+          <li>Gabungkan seluruh data tanpa mengubah isi sumber</li>
+        </ul>
+        <div class="lg-tag">Konsolidasi Data KPI</div>
+      </div>
+      <div class="lg-right">
+        <div class="lg-box">
+          <small>SELAMAT DATANG</small>
+          <h2>Masuk ke Sistem</h2>
+          <p class="mu">Gunakan akun administrator untuk melanjutkan.</p>
+          <label for="u">Username</label>
+          <div class="inp"><span aria-hidden="true">&#128100;</span><input id="u" placeholder="Masukkan username" autocomplete="username"></div>
+          <label for="pw">Password</label>
+          <div class="inp"><span aria-hidden="true">&#128274;</span><input id="pw" type="password" placeholder="Masukkan password" autocomplete="current-password"><button type="button" id="eye" aria-label="Tampilkan password">&#128065;</button></div>
+          <button class="btn" id="go" type="button">Masuk ke Dashboard <span aria-hidden="true">&#8594;</span></button>
+          <div id="err" role="alert"></div>
+          <div class="lg-foot">Akun administrator Monitoring Bisnis.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="app" hidden>
+    <aside>
+      <div class="brand"><img src="pegadaian-logo.png" alt="Pegadaian"><span>Monitoring Bisnis</span></div>
+      <div class="side-label">MENU UTAMA</div>
+      <nav aria-label="Navigasi utama">
+        <a class="on" href="#mergeView" data-view="mergeView" aria-current="page"><i aria-hidden="true">&#128202;</i><span>Penggabungan Data</span></a>
+        <a href="#afterFilterView" data-view="afterFilterView"><i aria-hidden="true">&#128269;</i><span>After Filter</span></a>
+      </nav>
+      <div class="side-user">
+        <div class="av">B</div>
+        <div><b>Bisnisadmin</b><small>Administrator</small></div>
+        <button class="lo" id="logout" type="button" title="Keluar" aria-label="Keluar">&#10162;</button>
+      </div>
+    </aside>
+
+    <main id="workspace">
+      <div id="mergeView" class="view-panel">
+      <header>
+        <div><div class="crumb">MONITORING BISNIS</div><h2>Penggabungan Data KPI</h2></div>
+        <div class="head-r"><span class="pill"><i></i> Sistem siap digunakan</span><button class="btn ghost" id="logout2" type="button">&#10162; Keluar</button></div>
+      </header>
+
+      <section class="hero">
+        <div>
+          <small>KONSOLIDASI DATA</small>
+          <h1>Gabungkan data KPI seluruh daerah</h1>
+          <p>Tambahkan beberapa file daerah dengan struktur kolom yang sama. Sistem memvalidasi setiap file dan menghitung jumlah barisnya, lalu menyusun data secara berurutan sesuai daftar file tanpa mengubah isi kolom apa pun.</p>
+        </div>
+        <div class="hero-tag"><span>&#10003;</span> Isi data tetap apa adanya</div>
+      </section>
+
+      <section class="card upload-card">
+        <div class="section-head">
+          <div class="section-icon">&#128193;</div>
+          <div><h3>Unggah File Sumber</h3><p>Pilih beberapa file sekaligus atau tambahkan file secara bertahap. Jumlah baris akan ditampilkan untuk setiap file.</p></div>
+          <div class="file-count" id="fileCount">0 file dipilih</div>
+        </div>
+
+        <label class="dropzone" id="dropzone" for="fileInput">
+          <input id="fileInput" type="file" accept=".xlsx,.xls,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" multiple>
+          <span class="drop-icon">&#8679;</span>
+          <b>Tarik dan letakkan file di sini</b>
+          <span>atau <em>pilih file dari perangkat</em></span>
+          <small>Format yang didukung: XLSX, XLS, dan CSV</small>
+        </label>
+
+        <div class="file-toolbar">
+          <div><b>Daftar file</b><small id="fileHint">Belum ada file yang ditambahkan.</small></div>
+          <div class="toolbar-actions">
+            <button class="btn o sm" id="addMore" type="button">＋ Tambah File</button>
+            <button class="btn text sm" id="clearAll" type="button" disabled>Hapus Semua</button>
+          </div>
+        </div>
+
+        <div class="table-wrap" id="fileTableWrap">
+          <table class="file-table">
+            <thead><tr><th style="width:48px">Urutan</th><th>Nama File / Daerah</th><th>Ukuran</th><th>Validasi</th><th>Jumlah Baris</th><th style="width:72px">Aksi</th></tr></thead>
+            <tbody id="fileRows"><tr class="empty-row"><td colspan="6">Belum ada file. Tambahkan file Excel atau CSV untuk memulai.</td></tr></tbody>
+            <tfoot><tr><td colspan="4"><strong>Total kumulatif seluruh file</strong></td><td id="fileRowsTotal">—</td><td></td></tr></tfoot>
+          </table>
+        </div>
+
+        <div class="progress-wrap" id="progressWrap" hidden>
+          <div class="progress-top"><b id="progressTitle">Memproses file...</b><span id="progressPercent">0%</span></div>
+          <div class="progress-track"><div id="progressBar"></div></div>
+          <small id="progressDetail">Menyiapkan proses validasi.</small>
+        </div>
+
+        <div class="main-actions">
+          <div class="privacy-note"><span>&#128274;</span><span>File diproses langsung di browser perangkat ini dan tidak dikirim ke server.</span></div>
+          <button class="btn" id="processBtn" type="button" disabled>Validasi &amp; Gabungkan Data <span>&#8594;</span></button>
+        </div>
+      </section>
+
+      <section class="result-section" id="resultSection" hidden>
+        <div class="result-heading"><div><small>HASIL PENGGABUNGAN</small><h3>Data konsolidasi berhasil disiapkan</h3><p>Semua file lolos validasi. Data disusun berurutan per file/daerah; isi dan nilai setiap kolom dipertahankan, termasuk UNIT.</p></div><span class="success-pill">&#10003; Berhasil</span></div>
+        <div class="stats-grid">
+          <article class="stat-card"><span>File tergabung</span><b id="statFiles">0</b><small>File sumber</small></article>
+          <article class="stat-card"><span>Total baris data</span><b id="statRows">0</b><small>Seluruh daerah</small></article>
+          <article class="stat-card"><span>Baris tervalidasi</span><b id="statValidated">0</b><small>Jumlah kumulatif</small></article>
+        </div>
+        <div class="preview-card">
+          <div class="preview-head"><div><h4>Pratinjau Data Gabungan</h4><p>Menampilkan maksimal 8 baris pertama. Seluruh baris tetap disertakan pada file hasil.</p></div><span id="previewCount">0 baris</span></div>
+          <div class="table-wrap preview-wrap"><table><thead id="previewHead"></thead><tbody id="previewBody"></tbody></table></div>
+          <div class="export-row">
+            <div class="export-copy">
+              <b>Tahap 1 — Hasil Penggabungan Awal</b>
+              <small>Seluruh file daerah digabung berurutan sesuai daftar unggah. Belum ada filter BRAND AWARENESS atau penomoran; semua isi sumber tetap dipertahankan.</small>
+              <div class="export-date-control">
+                <label for="exportDate">Tanggal pada nama file</label>
+                <input id="exportDate" type="date" aria-describedby="exportDateHelp">
+              </div>
+              <small class="filename-preview" id="exportFilenamePreview">Nama file akan mengikuti tanggal yang dipilih.</small>
+              <small class="date-help" id="exportDateHelp">Tanggal otomatis mengikuti hari ini dan bisa diubah sebelum mengunduh.</small>
+            </div>
+            <div class="export-actions"><button class="btn download-btn" id="downloadCsvBtn" type="button">&#11015; Unduh CSV</button><button class="btn o download-btn" id="downloadXlsxBtn" type="button">&#11015; Unduh Excel</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="format-card">
+        <div class="format-top"><div class="section-icon">&#128196;</div><div><h3>Struktur Kolom Wajib</h3><p>Setiap file sumber harus menggunakan 9 kolom berikut secara berurutan.</p></div></div>
+        <div class="schema-list" id="schemaList"></div>
+        <div class="format-note"><b>Catatan:</b> Header harus sama dengan format yang ditentukan. Data digabung berurutan sesuai urutan file pada daftar, dan urutan baris di dalam setiap file tetap dipertahankan. Tidak ada kolom atau nilai data yang diganti. File yang tidak sesuai akan ditandai agar dapat diperbaiki.</div>
+      </section>
+
+      <footer>Monitoring Bisnis <span>•</span> Konsolidasi Data KPI</footer>
+      </div>
+
+      <div id="afterFilterView" class="view-panel" hidden>
+        <header>
+          <div><div class="crumb">MONITORING BISNIS / PENGOLAHAN LANJUTAN</div><h2>After Filter KPI</h2></div>
+          <div class="head-r"><span class="pill"><i></i> Filter lanjutan</span><button class="btn ghost" id="logoutAfterFilter" type="button">&#10162; Keluar</button></div>
+        </header>
+
+        <section class="hero">
+          <div>
+            <small>FILTER &amp; PENOMORAN KOMPONEN</small>
+            <h1>Siapkan data KPI setelah filter</h1>
+            <p>Gunakan hasil Penggabungan Data atau unggah langsung satu file hasil yang sudah jadi. Sistem akan membuang BRAND AWARENESS, menerapkan nomor berdasarkan pasangan KOMPONEN dan KATEGORI, menghapus baris bernomor 0, serta menyediakan unduhan pada setiap tahap.</p>
+          </div>
+          <div class="hero-tag"><span>&#10003;</span> Data sumber tetap dipertahankan</div>
+        </section>
+
+        <section class="card upload-card">
+          <div class="section-head">
+            <div class="section-icon">&#9881;</div>
+            <div><h3>Sumber Data After Filter</h3><p>Pilih hasil penggabungan dari tab sebelumnya atau unggah langsung satu file hasil jadi berformat Excel/CSV dengan 9 kolom wajib.</p></div>
+          </div>
+          <div class="filter-source" id="filterSourceStatus">
+            <span class="source-dot"></span>
+            <div><b>Belum ada sumber data</b><small>Unggah file hasil jadi di bawah atau gunakan hasil dari tab Penggabungan Data.</small></div>
+            <button class="btn o sm" id="goToMergeBtn" type="button">Ke Penggabungan Data</button>
+          </div>
+          <div class="manual-source-box">
+            <div class="manual-source-copy">
+              <b>Upload langsung hasil data yang sudah jadi</b>
+              <small>Tidak perlu menggabungkan file daerah terlebih dahulu. Pilih satu file XLSX, XLS, atau CSV dengan header 9 kolom yang sama.</small>
+              <small id="afterFilterManualFileMeta">Belum ada file manual yang dipilih.</small>
+            </div>
+            <input id="afterFilterFileInput" type="file" accept=".xlsx,.xls,.csv" hidden>
+            <div class="manual-source-actions">
+              <button class="btn o sm" id="selectAfterFilterFileBtn" type="button">Pilih File Hasil Jadi</button>
+              <button class="btn ghost sm" id="clearAfterFilterManualBtn" type="button" hidden>Gunakan Hasil Penggabungan</button>
+            </div>
+          </div>
+          <div class="filter-run-row">
+            <div class="privacy-note"><span>&#128274;</span><span>Seluruh proses dilakukan di browser. Urutan baris yang lolos tetap mengikuti urutan hasil penggabungan.</span></div>
+            <button class="btn" id="runAfterFilterBtn" type="button" disabled>Terapkan Filter &amp; Penomoran <span>&#8594;</span></button>
+          </div>
+          <div class="progress-wrap" id="filterProgress" hidden>
+            <div class="progress-top"><b id="filterProgressTitle">Menyiapkan After Filter...</b><span id="filterProgressPercent">0%</span></div>
+            <div class="progress-track"><div id="filterProgressBar"></div></div>
+            <small id="filterProgressDetail">Membaca hasil penggabungan.</small>
+          </div>
+        </section>
+
+        <section class="result-section" id="afterFilterResult" hidden>
+          <div class="result-heading">
+            <div><small>HASIL AFTER FILTER</small><h3>Data hasil filter berhasil disiapkan</h3><p>Kolom No hanya digunakan untuk seleksi. File akhir kembali menggunakan 9 kolom sumber tanpa kolom No.</p></div>
+            <span class="success-pill">&#10003; Berhasil</span>
+          </div>
+          <div class="stats-grid four">
+            <article class="stat-card"><span>Baris sumber</span><b id="filterStatSource">0</b><small>Hasil penggabungan</small></article>
+            <article class="stat-card"><span>BRAND AWARENESS dibuang</span><b id="filterStatBrand">0</b><small>Komponen dikecualikan</small></article>
+            <article class="stat-card"><span>No = 0 dibuang</span><b id="filterStatZero">0</b><small>Tidak masuk ketentuan</small></article>
+            <article class="stat-card"><span>Baris hasil akhir</span><b id="filterStatKept">0</b><small>Siap diekspor</small></article>
+          </div>
+          <div class="lookup-diagnostics" id="lookupDiagnostics">
+            <b>Rincian pemeriksaan lookup</b>
+            <span>Kategori tidak ditemukan: <strong id="filterUnknownCategory">0</strong></span>
+            <span>Komponen tidak ditemukan: <strong id="filterUnknownComponent">0</strong></span>
+            <span>Pasangan ada di matriks tetapi nilainya 0/kosong: <strong id="filterKnownZero">0</strong></span>
+            <span>Komponen cocok langsung dengan A5:A31: <strong id="filterExactComponents">0</strong></span>
+            <span>Nama cocok daftar P (tidak dipakai rumus): <strong id="filterComponentAliases">0</strong></span>
+            <span>Pasangan unik diperiksa: <strong id="lookupDistinctPairs">0</strong></span>
+          </div>
+          <details class="lookup-audit">
+            <summary>Periksa ringkasan pasangan KATEGORI × KOMPONEN (maksimal 100 pasangan, No = 0 ditampilkan lebih dahulu)</summary>
+            <p>Penentuan No sekarang meniru rumus XLOOKUP secara langsung: KOMPONEN harus cocok dengan KOMP!A5:A31 dan KATEGORI harus cocok dengan KOMP!B4:N4. Pencocokan tidak membuang spasi atau mengganti tanda hubung. Nama pada kolom P hanya ditampilkan sebagai petunjuk bila terdeteksi; alias itu tidak dipakai dalam rumus yang kamu berikan. Untuk memeriksa setiap baris, unduh Tahap 3 — Audit Penomoran.</p>
+            <div class="table-wrap preview-wrap">
+              <table>
+                <thead><tr><th>KATEGORI</th><th>KOMPONEN sumber</th><th>KOMPONEN referensi matriks</th><th>No</th><th>Jumlah baris</th><th>Status lookup</th></tr></thead>
+                <tbody id="lookupAuditBody"><tr><td colspan="6">Belum ada hasil pemeriksaan.</td></tr></tbody>
+              </table>
+            </div>
+          </details>
+          <div class="preview-card">
+            <div class="preview-head"><div><h4>Pratinjau Data Setelah Filter</h4><p>Menampilkan maksimal 8 baris pertama dari data akhir. Kolom No tidak disertakan.</p></div><span id="afterFilterPreviewCount">0 baris</span></div>
+            <div class="table-wrap preview-wrap"><table><thead id="afterFilterPreviewHead"></thead><tbody id="afterFilterPreviewBody"></tbody></table></div>
+            <div class="stage-export-section">
+              <div class="stage-export-head">
+                <div>
+                  <b>Unduh hasil pada setiap tahap</b>
+                  <small>Setiap tahap menyediakan file CSV dan Excel. Gunakan file tahap 3 untuk memeriksa nilai No sebelum memakai hasil akhir.</small>
+                </div>
+                <div class="export-date-control">
+                  <label for="afterFilterDate">Tanggal pada nama file</label>
+                  <input id="afterFilterDate" type="date" aria-describedby="afterFilterDateHelp">
+                </div>
+              </div>
+              <small class="date-help" id="afterFilterDateHelp">Tanggal otomatis mengikuti hari ini dan dapat diubah. Semua nama file pada tahap 1–4 memakai tanggal pilihan ini.</small>
+              <div class="stage-export-grid">
+                <article class="stage-export-card">
+                  <span class="stage-number">TAHAP 1</span>
+                  <b>Sumber Data Input</b>
+                  <small id="mergeStageRowCount">File sumber yang dipilih; termasuk BRAND AWARENESS.</small>
+                  <small class="filename-preview" id="mergeStageFilenamePreview">Nama file mengikuti tanggal.</small>
+                  <div class="stage-buttons">
+                    <button class="btn download-btn" id="stageMergeCsvBtn" type="button" disabled>Unduh CSV</button>
+                    <button class="btn o download-btn" id="stageMergeXlsxBtn" type="button" disabled>Unduh Excel</button>
+                  </div>
+                </article>
+                <article class="stage-export-card">
+                  <span class="stage-number">TAHAP 2</span>
+                  <b>Tanpa BRAND AWARENESS</b>
+                  <small><strong id="withoutBrandRowCount">0</strong> baris; seluruh kolom sumber tetap 9 kolom.</small>
+                  <small class="filename-preview" id="withoutBrandFilenamePreview">Nama file mengikuti tanggal.</small>
+                  <div class="stage-buttons">
+                    <button class="btn download-btn" id="withoutBrandCsvBtn" type="button" disabled>Unduh CSV</button>
+                    <button class="btn o download-btn" id="withoutBrandXlsxBtn" type="button" disabled>Unduh Excel</button>
+                  </div>
+                </article>
+                <article class="stage-export-card">
+                  <span class="stage-number">TAHAP 3</span>
+                  <b>Hasil Penomoran / Audit No</b>
+                  <small><strong id="numberedRowCount">0</strong> baris; 10 kolom termasuk No. Baris No = 0 masih ada untuk pemeriksaan.</small>
+                  <small class="filename-preview" id="numberedFilenamePreview">Nama file mengikuti tanggal.</small>
+                  <div class="stage-buttons">
+                    <button class="btn download-btn" id="numberedCsvBtn" type="button" disabled>Unduh CSV</button>
+                    <button class="btn o download-btn" id="numberedXlsxBtn" type="button" disabled>Unduh Excel</button>
+                  </div>
+                </article>
+                <article class="stage-export-card final-stage">
+                  <span class="stage-number">TAHAP 4</span>
+                  <b>Hasil Akhir After Filter</b>
+                  <small><strong id="finalRowCount">0</strong> baris; hanya No &gt; 0. Kolom No sudah dibuang.</small>
+                  <small class="filename-preview" id="afterFilterFilenamePreview">Nama file mengikuti tanggal.</small>
+                  <div class="stage-buttons">
+                    <button class="btn download-btn" id="afterFilterCsvBtn" type="button" disabled>Unduh CSV</button>
+                    <button class="btn o download-btn" id="afterFilterXlsxBtn" type="button" disabled>Unduh Excel</button>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="format-card">
+          <div class="format-top"><div class="section-icon">&#128203;</div><div><h3>Ketentuan Filter &amp; Penomoran</h3><p>Aturan kategori dan komponen diterapkan sesuai matriks yang diberikan.</p></div></div>
+          <div class="filter-rules">
+            <div><b>1. Keluarkan BRAND AWARENESS</b><span>Semua baris dengan KOMPONEN = BRAND AWARENESS dibuang terlebih dahulu, untuk semua kategori.</span></div>
+            <div><b>2. Tentukan nilai No</b><span>Nomor ditentukan dari KOMPONEN sebagai baris matriks dan KATEGORI sebagai kolom matriks. Nilai yang kosong/tidak tercantum dianggap 0.</span></div>
+            <div><b>3. Buang No = 0</b><span>Hanya baris dengan nomor lebih dari 0 yang dipertahankan. Nomor tidak disertakan pada file hasil akhir.</span></div>
+            <div><b>4. Pertahankan isi dan urutan</b><span>Kesembilan kolom sumber tetap utuh dan urutan baris yang lolos tidak diurutkan ulang.</span></div>
+          </div>
+          <div class="format-note"><b>Catatan interpretasi:</b> perhitungan mengikuti lookup dua arah pada rumus XLOOKUP: KOMPONEN dicari pada daftar baris matriks A5:A31 dan KATEGORI dicari pada header kolom matriks B4:N4. Sesuai perilaku XLOOKUP exact match, huruf besar/kecil tidak dibedakan, tetapi spasi tambahan, spasi ganda, karakter tersembunyi, dan variasi tanda hubung tetap dianggap berbeda. Nama singkat pada kolom P tidak dipakai untuk menggantikan pencarian A5:A31 karena rumus yang diberikan tidak merujuk kolom P; jika ditemukan, alias hanya ditampilkan sebagai petunjuk audit. Peta kolom Q:R adalah klasifikasi tingkat unit (AREA/OUTLET/CABANG/KANWIL), bukan bagian dari rumus No.</div>
+        </section>
+        <footer>Monitoring Bisnis <span>•</span> After Filter KPI</footer>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
